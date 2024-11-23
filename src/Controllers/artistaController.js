@@ -22,7 +22,7 @@ const criarArtista = async (req, res) => {
             await artista.setDiscos(discosExistentes); // Associando discos ao artista
         }
 
-        res.status(201).json(artista); // Respondendo com o artista criado
+        // res.status(201).json(artista); // Respondendo com o artista criado
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao criar artista', details: error.message });

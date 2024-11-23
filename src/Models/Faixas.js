@@ -43,15 +43,14 @@ Faixas.init(
 );
 
 // Relacionamento com Discos (muitas faixas pertencem a um disco)
-Faixas.belongsTo(Discos, {
-    foreignKey: 'idDisco',  // Chave estrangeira no modelo Faixas
-    as: 'disco',  // Alias para o relacionamento
-});
+
 
 // Relacionamento com Genero (faixas pertencem a um genero)
 Faixas.belongsTo(Genero, {
     foreignKey: 'idGenero',  // Chave estrangeira no modelo Faixas
     as: 'genero',  // Alias para o relacionamento
 });
+
+
 
 module.exports = Faixas;

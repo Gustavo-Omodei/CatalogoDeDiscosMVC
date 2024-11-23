@@ -20,6 +20,20 @@
     </header>
 
     <main>
+        <!-- Barra de busca -->
+        <h2>Buscar Discos</h2>
+        <form method="get" action="/discos">
+            <div>
+                <label for="nomeDisco">Nome do Disco:</label>
+                <input type="text" id="nomeDisco" name="nomeDisco" placeholder="Buscar por nome do disco" value="<%= nomeDisco || '' %>">
+            </div>
+            <div>
+                <label for="nomeArtista">Nome do Artista:</label>
+                <input type="text" id="nomeArtista" name="nomeArtista" placeholder="Buscar por nome do artista" value="<%= nomeArtista || '' %>">
+            </div>
+            <button type="submit">Buscar</button>
+        </form>
+
         <h2>Discos Cadastrados</h2>
         <!-- Exibe a lista de discos -->
         <ul>
@@ -27,7 +41,7 @@
                 <li>
                     <h3><%= disco.titulo %></h3>
                     <p>Ano de Lançamento: <%= disco.anoLancamento %></p>
-                    <img src="<%= disco.capa %>" alt="Capa do Disco" width="150">
+                    <img src="<%= disco.capaImagem %>" alt="Capa do Disco" width="150">
                     <br>
                     <a href="/discos/<%= disco.idDisco %>">Ver Detalhes</a>
                 </li>

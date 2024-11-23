@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Discos - Inserir Disco</title>
-    <link rel="stylesheet" href="/Views/styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <header>
@@ -13,7 +13,7 @@
             <ul>
                 <li><a href="/">Início</a></li>
                 <li><a href="/discos">Discos</a></li>
-                <li><a href="/artistas">Artistas</a></li>
+                <li><a href="/artistas/novo">Artistas</a></li>
             </ul>
         </nav>
     </header>
@@ -28,7 +28,7 @@
             <input type="number" id="anoLancamento" name="anoLancamento" required>
 
             <label for="capaImagem">Capa do Disco (URL da imagem):</label>
-            <input type="url" id="capaImagem" name="capaImagem" placeholder="https://exemplo.com/imagem.jpg" required>
+            <input type="text" id="capaImagem" name="capaImagem" placeholder="https://exemplo.com/imagem.jpg" required>
 
             <h3>Faixas do Disco</h3>
             <div id="faixas-container">

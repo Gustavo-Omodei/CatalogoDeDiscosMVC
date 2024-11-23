@@ -16,10 +16,8 @@ router.delete('/:id', discoController.deletarDisco);
 
 router.get('/discos', async (req, res) => {
   try {
-      // Busca os gêneros disponíveis no banco de dados
       const generos = await Genero.findAll();
 
-      // Renderiza o formulário de discos com os gêneros
       res.render('discos', { generos });
   } catch (error) {
       console.error('Erro ao carregar os gêneros:', error);
@@ -73,7 +71,7 @@ router.post('/artistas', async (req, res) => {
       await artista.setDiscos(discosExistentes); // Associando discos ao artista
     }
 
-    res.status(201).json(artista); // Respondendo com o artista criado
+    // res.status(201).json(artista); // Respondendo com o artista criado
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao criar artista', details: error.message });
