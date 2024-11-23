@@ -1,0 +1,32 @@
+<main>
+    <h2>Cadastrar Novo Artista</h2>
+    <form id="form-inserir-artista" method="POST" action="/artistas">
+      
+      <label for="nome">Nome do Artista:</label>
+      <input type="text" id="nome" name="nome" required>
+  
+      <select name="idGenero" required>
+        <option value="rock">Rock</option>
+        <option value="pop">Pop</option>
+        <option value="jazz">Jazz</option>
+        <!-- Adicione os gêneros disponíveis -->
+    </select>
+  
+      <label for="discos">Discos Associados:</label>
+      <select id="discos" name="discos[]" multiple required>
+        <% if (discos && discos.length > 0) { %>
+          <% discos.forEach(disco => { %>
+            <option value="<%= disco.idDisco %>"><%= disco.titulo %> (<%= disco.anoLancamento %>)</option>
+          <% }) %>
+        <% } else { %>
+          <option disabled>Nenhum disco disponível</option>
+        <% } %>
+      </select>
+
+
+      
+  
+      <button type="submit">Cadastrar Artista</button>
+    </form>
+  </main>
+  

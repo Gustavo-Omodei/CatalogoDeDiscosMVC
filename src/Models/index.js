@@ -1,22 +1,16 @@
-const sequelize = require('../config/database'); // Importa a instância do Sequelize
-const { DataTypes } = require('sequelize');
+const sequelize = require('../../config/database');
 
-// Importa os modelos
-const Disk = require('./Disk');
-const Artist = require('./Artist');
-const Genre = require('./Genre');
+const {Discos, Artistas, Faixas,Genero} = require('./Discos', './Artistas', './Faixas', './Genero')
 
-// Relacionamentos (exemplo)
-Disk.belongsTo(Artist);
-Artist.hasMany(Disk);
+// const Discos = require('./Discos');
+// const Artistas = require('./Artistas');
+// const Faixas = require('./Faixas');
+// const Genero = require('./Genero');
 
-Genre.hasMany(Disk);
-Disk.belongsTo(Genre);
-
-// Exporta o sequelize e os modelos
 module.exports = {
-  sequelize,
-  Disk,
-  Artist,
-  Genre,
+    sequelize,
+    Discos,
+    Artistas,
+    Faixas,
+    Genero,
 };

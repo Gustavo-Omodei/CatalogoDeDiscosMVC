@@ -1,25 +1,29 @@
-require('dotenv').config(); // Para usar variáveis de ambiente
+require('dotenv').config(); 
 const express = require('express');
 const bodyParser = require('body-parser');
-const { sequelize } = require('./src/Models/index'); // Importa o Sequelize configurado
-const diskRoutes = require('./src/routes/diskRoutes'); // Importa as rotas
+const path = require('path');
+const { sequelize } = require('./src/Models'); 
+const diskRoutes = require('./src/routes/diskRoutes'); 
+
+const discoController = require('./src/Controllers/discoController');
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.send('Bem-vindo ao catálogo de discos!');
-});
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'src/Views')); 
 
-// Middlewares
-app.use(bodyParser.json()); // Para lidar com JSON no corpo das requisições
+app.use(express.urlencoded({ extended: true }));
 
-// Rotas
-app.use('/disks', diskRoutes); // Exemplo de rota para discos
+app.use(express.static(path.join(__dirname, 'src', 'public')));
 
-// Porta de execução
+app.get('/', discoController.listarDiscos);
+
+app.use(bodyParser.json());
+
+app.use(diskRoutes);
+
 const PORT = process.env.PORT || 3000;
 
-// Conecta ao banco e inicia o servidor
 sequelize
     .authenticate()
     .then(() => {
