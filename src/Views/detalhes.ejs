@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= disco.titulo %> - Detalhes</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+    <header>
+        <h1><%= disco.titulo %> - Detalhes</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/discos">Cadastrar Disco</a></li>
+                <li><a href="/artistas/novo">Cadastrar Artistas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2> <%= disco.titulo %></h2>
+        
+        <!-- Formulário de Edição do Disco -->
+        <form action="/discos/<%= disco.idDisco %>" method="POST" enctype="multipart/form-data">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" value="<%= disco.titulo %>" required><br><br>
+
+            <label for="anoLancamento">Ano de Lançamento:</label>
+            <input type="number" id="anoLancamento" name="anoLancamento" value="<%= disco.anoLancamento %>" required><br><br>
+
+            <label for="capaImagem">Capa do Disco (URL ou Upload):</label>
+            <input type="text" id="capaImagem" name="capaImagem" value="<%= disco.capaImagem %>" placeholder="URL da imagem" /><br><br>
+
+            <button type="submit">Atualizar Disco</button>
+        </form>
+
+        <h3>Faixas:</h3>
+        <ul>
+            <% if (faixas && faixas.length > 0) { %>
+                <% faixas.forEach(faixa => { %>
+                    <li><%= faixa.titulo %></li>
+                <% }); %>
+            <% } else { %>
+                <p>Sem faixas cadastradas.</p>
+            <% } %>
+        </ul>
+
+        <h3>Artistas:</h3>
+        <ul>
+            <% if (artistas && artistas.length > 0) { %>
+                <% artistas.forEach(artista => { %>
+                    <li><%= artista.nome %></li>
+                <% }); %>
+            <% } else { %>
+                <p>Sem artistas associados.</p>
+            <% } %>
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Catálogo de Discos</p>
+    </footer>
+
+</body>
+</html>

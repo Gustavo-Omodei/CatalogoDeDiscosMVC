@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Discos</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
@@ -13,8 +13,8 @@
         <nav>
             <ul>
                 <li><a href="/">Início</a></li>
-                <li><a href="/discos">Discos</a></li>
-                <li><a href="/artistas/novo">Artistas</a></li>
+                <li><a href="/discos">Cadastrar Disco</a></li>
+                <li><a href="/artistas/novo">Cadastrar Artistas</a></li>
             </ul>
         </nav>
     </header>
@@ -22,16 +22,25 @@
     <main>
         <!-- Barra de busca -->
         <h2>Buscar Discos</h2>
-        <form method="get" action="/discos">
+        <form method="GET" action="/">
             <div>
-                <label for="nomeDisco">Nome do Disco:</label>
-                <input type="text" id="nomeDisco" name="nomeDisco" placeholder="Buscar por nome do disco" value="<%= nomeDisco || '' %>">
+                <!-- Campo de seleção para escolher o tipo de busca -->
+                <label for="tipoBusca">Buscar por:</label>
+                <select name="tipoBusca" id="tipoBusca">
+                    <option value="disco">Disco</option>
+                    <option value="artista">Artista</option>
+                </select>
             </div>
             <div>
-                <label for="nomeArtista">Nome do Artista:</label>
-                <input type="text" id="nomeArtista" name="nomeArtista" placeholder="Buscar por nome do artista" value="<%= nomeArtista || '' %>">
+                <!-- Campo de entrada para o termo de busca -->
+                <input
+                    type="text"
+                    name="termoBusca"
+                    placeholder="Digite o nome do disco ou artista"
+                    required
+                />
+                <button type="submit">Buscar</button>
             </div>
-            <button type="submit">Buscar</button>
         </form>
 
         <h2>Discos Cadastrados</h2>

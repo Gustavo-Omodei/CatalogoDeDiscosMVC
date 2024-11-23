@@ -33,7 +33,7 @@ const criarArtista = async (req, res) => {
   const renderFormArtista = async (req, res) => {
     try {
       const discos = await Discos.findAll(); // Pega todos os discos cadastrados
-      res.render('artistas', { discos });
+      res.render('criarArtistas', { discos });
 
     } catch (error) {
       console.error(error);

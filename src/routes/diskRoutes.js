@@ -11,7 +11,9 @@ const Artistas = require('../Models/Artistas')
 //Discos
 router.get('/', discoController.listarDiscos);
 router.post('/discos', discoController.criarDisco);
-router.put('/:id', discoController.atualizarDisco);
+
+router.get('/discos/:id', discoController.atualizarDisco);
+router.put('/discos/:id', discoController.atualizarDisco);
 router.delete('/:id', discoController.deletarDisco);
 
 router.get('/discos', async (req, res) => {
