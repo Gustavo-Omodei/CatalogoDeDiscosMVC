@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const { sequelize } = require('./src/Models'); 
 const diskRoutes = require('./src/routes/diskRoutes'); 
+const methodOverride = require('method-override');
+
 
 const discoController = require('./src/Controllers/discoController');
 
@@ -18,6 +20,7 @@ app.use(express.json());
 
 app.use(express.static('src/Views'));
 
+app.use(methodOverride('_method'));
 
 app.get('/', discoController.listarDiscos);
 

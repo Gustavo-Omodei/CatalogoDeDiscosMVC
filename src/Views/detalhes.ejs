@@ -5,6 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= disco.titulo %> - Detalhes</title>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Estilo básico para a navegação */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative; /* Necessário para os dropdowns */
+        }
+
+        /* Esconde os menus suspensos por padrão */
+        nav select {
+            display: none;
+            position: absolute;
+            top: 100%; /* Faz os dropdowns aparecerem abaixo */
+            left: 0;
+            width: 200px;
+        }
+
+        /* Mostra o menu suspenso ao passar o mouse por cima */
+        nav li:hover > select {
+            display: block;
+        }
+
+        /* Estilo dos elementos select (dropdowns) */
+        nav select {
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,14 +46,32 @@
         <nav>
             <ul>
                 <li><a href="/">Início</a></li>
-                <li><a href="/discos">Cadastrar Disco</a></li>
-                <li><a href="/artistas/novo">Cadastrar Artistas</a></li>
+
+                <!-- Dropdown para Discos -->
+                <li>
+                    <a href="#">Discos</a>
+                    <select id="discoActions" name="discoActions" onchange="window.location.href=this.value;">
+                        <option value="/discos">Cadastrar Disco</option>
+                        <option value="/discos/atualizar/<%= disco.idDisco %>">Atualizar Disco</option>
+                        <option value="/discos/deletar/<%= disco.idDisco %>">Excluir Disco</option>
+                    </select>
+                </li>
+
+                <!-- Dropdown para Artistas -->
+                <li>
+                    <a href="#">Artistas</a>
+                    <select id="artistaActions" name="artistaActions" onchange="window.location.href=this.value;">
+                        <option value="/artistas/novo">Cadastrar Artista</option>
+                        <option value="/artistas/atualizar/<%= disco.idDisco %>">Atualizar Artista</option>
+                        <option value="/artistas/deletar/<%= disco.idDisco %>">Excluir Artista</option>
+                    </select>
+                </li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h2> <%= disco.titulo %></h2>
+        <h2><%= disco.titulo %></h2>
         
         <!-- Formulário de Edição do Disco -->
         <form action="/discos/<%= disco.idDisco %>" method="POST" enctype="multipart/form-data">
@@ -30,10 +81,18 @@
             <label for="anoLancamento">Ano de Lançamento:</label>
             <input type="number" id="anoLancamento" name="anoLancamento" value="<%= disco.anoLancamento %>" required><br><br>
 
+            <strong>Gênero:</strong> <%= disco.genero ? disco.genero.nome : 'Sem gênero associado' %><br>
+
             <label for="capaImagem">Capa do Disco (URL ou Upload):</label>
             <input type="text" id="capaImagem" name="capaImagem" value="<%= disco.capaImagem %>" placeholder="URL da imagem" /><br><br>
 
             <button type="submit">Atualizar Disco</button>
+        </form>
+
+        <!-- Formulário para Deletar Disco -->
+        <form id="deleteForm" method="POST" action="/discos/deletar/<%= disco.idDisco %>">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" style="background-color: red; color: white;">Deletar Disco</button>
         </form>
 
         <h3>Faixas:</h3>
@@ -63,5 +122,25 @@
         <p>&copy; 2024 Catálogo de Discos</p>
     </footer>
 
+    <script>
+        document.getElementById('deleteForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+    
+            fetch(this.action, {
+                method: 'DELETE',  
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); 
+            })
+            .catch(error => {
+                console.error('Erro ao enviar a requisição DELETE:', error);
+            });
+        });
+    </script>
+    
 </body>
 </html>

@@ -5,43 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Discos</title>
     <link rel="stylesheet" href="/styles.css">
-</head>
+</head
+
+>
 <body>
 
+    <style>
+        /* Estilo básico para a navegação */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative; /* Necessário para os dropdowns */
+        }
+
+        /* Esconde os menus suspensos por padrão */
+        nav select {
+            display: none;
+            position: absolute;
+            top: 100%; /* Faz os dropdowns aparecerem abaixo */
+            left: 0;
+            width: 200px;
+        }
+
+        /* Mostra o menu suspenso ao passar o mouse por cima */
+        nav li:hover > select {
+            display: block;
+        }
+
+        /* Estilo dos elementos select (dropdowns) */
+        nav select {
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+    </style>
+
     <header>
-        <h1>Catálogo de Discos</h1>
+        <h1><%= discos.titulo %> - Detalhes</h1>
         <nav>
             <ul>
                 <li><a href="/">Início</a></li>
-                <li><a href="/discos">Cadastrar Disco</a></li>
-                <li><a href="/artistas/novo">Cadastrar Artistas</a></li>
+
+                <!-- Dropdown para Discos -->
+                <li>
+                    <a href="#">Discos</a>
+                    <select id="discoActions" name="discoActions" onchange="window.location.href=this.value;">
+                        <option value="/discos">Cadastrar Disco</option>
+                        <option value="/discos/atualizar/<%= discos.idDisco %>">Atualizar Disco</option>
+                        <option value="/discos/deletar/<%= discos.idDisco %>">Excluir Disco</option>
+                    </select>
+                </li>
+
+                <!-- Dropdown para Artistas -->
+                <li>
+                    <a href="#">Artistas</a>
+                    <select id="artistaActions" name="artistaActions" onchange="window.location.href=this.value;">
+                        <option value="/artistas/novo">Cadastrar Artista</option>
+                        <option value="/artistas/atualizar/<%= discos.idDisco %>">Atualizar Artista</option>
+                        <option value="/artistas/deletar/<%= discos.idDisco %>">Excluir Artista</option>
+                    </select>
+                </li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <!-- Barra de busca -->
+
         <h2>Buscar Discos</h2>
-        <form method="GET" action="/">
-            <div>
-                <!-- Campo de seleção para escolher o tipo de busca -->
-                <label for="tipoBusca">Buscar por:</label>
-                <select name="tipoBusca" id="tipoBusca">
-                    <option value="disco">Disco</option>
-                    <option value="artista">Artista</option>
-                </select>
-            </div>
-            <div>
-                <!-- Campo de entrada para o termo de busca -->
-                <input
-                    type="text"
-                    name="termoBusca"
-                    placeholder="Digite o nome do disco ou artista"
-                    required
-                />
-                <button type="submit">Buscar</button>
-            </div>
-        </form>
+<form method="GET" action="/">
+    <div>
+        <!-- Campo de seleção para escolher o tipo de busca -->
+        <label for="tipoBusca">Buscar por:</label>
+        <select name="tipoBusca" id="tipoBusca">
+            <option value="disco">Disco</option>
+            <option value="artista">Artista</option>
+            <option value="genero">Gênero</option>
+        </select>
+    </div>
+    <div>
+        <!-- Campo de entrada para o termo de busca -->
+        <input
+            type="text"
+            name="termoBusca"
+            placeholder="Digite o nome do disco, artista ou gênero"
+            required
+        />
+        <button type="submit">Buscar</button>
+    </div>
+</form>
 
         <h2>Discos Cadastrados</h2>
         <!-- Exibe a lista de discos -->

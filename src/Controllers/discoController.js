@@ -48,6 +48,50 @@ const { Op } = require('sequelize');
 //     }
 // };
 
+// const listarDiscos = async (req, res) => {
+//     try {
+//         const { tipoBusca, termoBusca } = req.query;
+
+//         // Filtros condicionais
+//         const whereConditions = {};
+//         const include = [];
+
+//         if (tipoBusca === 'disco') {
+//             // Busca pelo título do disco
+//             whereConditions.titulo = {
+//                 [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
+//             };
+//         } else if (tipoBusca === 'artista') {
+//             // Busca pelo nome do artista
+//             include.push({
+//                 model: Artistas,
+//                 as: 'Artistas',
+//                 where: {
+//                     nome: {
+//                         [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
+//                     }
+//                 }
+//             });
+//         } else {
+//             // Caso não seja especificado um tipo válido, inclua artistas por padrão
+//             include.push({
+//                 model: Artistas,
+//                 as: 'Artistas'
+//             });
+//         }
+
+//         const discos = await Discos.findAll({
+//             include,
+//             where: whereConditions
+//         });
+
+//         res.render('index', { discos, tipoBusca, termoBusca });
+//     } catch (error) {
+//         console.error('Erro ao carregar discos:', error);
+//         res.status(500).json({ error: 'Erro ao carregar discos' });
+//     }
+// };
+
 const listarDiscos = async (req, res) => {
     try {
         const { tipoBusca, termoBusca } = req.query;
@@ -66,6 +110,17 @@ const listarDiscos = async (req, res) => {
             include.push({
                 model: Artistas,
                 as: 'Artistas',
+                where: {
+                    nome: {
+                        [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
+                    }
+                }
+            });
+        } else if (tipoBusca === 'genero') {
+            // Busca pelo nome do gênero
+            include.push({
+                model: Genero,
+                as: 'genero',
                 where: {
                     nome: {
                         [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
@@ -93,14 +148,16 @@ const listarDiscos = async (req, res) => {
 };
 
 
+
 const criarDisco = async (req, res) => {
     try {
-        const { titulo, anoLancamento, capaImagem, faixas } = req.body;
+        const { titulo, anoLancamento, capaImagem, faixas, idgenero  } = req.body;
 
         const novoDisco = await Discos.create({
             titulo,
             anoLancamento,
             capaImagem,
+            idgenero,
         });
 
         if (faixas && Array.isArray(faixas)) {
@@ -113,6 +170,8 @@ const criarDisco = async (req, res) => {
             await Faixas.bulkCreate(faixasFormatadas);
         }
 
+        res.redirect(`/discos/${novoDisco.idDisco}`);
+
         // res.status(201).json({ message: 'Disco criado com sucesso!', disco: novoDisco });
     } catch (error) {
         console.error('Erro ao criar disco:', error);
@@ -120,20 +179,6 @@ const criarDisco = async (req, res) => {
     }
 };
 
-// const atualizarDisco = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { titulo, ano } = req.body;
-
-//         const disco = await Discos.findByPk(id);
-//         if (!disco) return res.status(404).json({ error: 'Disco não encontrado' });
-
-//         await disco.update({ titulo, ano });
-//         res.render('detalhes', { disco });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };
 
 const atualizarDisco = async (req, res) => {
     try {
@@ -150,7 +195,12 @@ const atualizarDisco = async (req, res) => {
                 {
                     model: Artistas, // Incluindo artistas vinculados ao disco
                     as: 'Artistas', // Usando o alias 'Artistas' definido na associação
+                },
+                {
+                    model: Genero,
+                    as: 'genero'
                 }
+                
             ],
         });
 
@@ -171,16 +221,44 @@ const atualizarDisco = async (req, res) => {
 
 
 
-const deletarDisco = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const disco = await Discos.findByPk(id);
-        if (!disco) return res.status(404).json({ error: 'Disco não encontrado' });
+// const deletarDisco = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const disco = await Discos.findByPk(id);
+//         if (!disco) return res.status(404).json({ error: 'Disco não encontrado' });
 
+//         await disco.destroy();
+//         res.json({ message: 'Disco deletado' });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+const deletarDisco = async (req, res) => {
+    const { id } = req.params; // Obtém o ID do disco a ser deletado da URL
+
+
+    try {
+
+
+        const disco = await Discos.findOne({
+            where: { idDisco: id }  // Aqui usamos 'idDisco' 
+        });
+
+        // Verifica se o disco existe
+
+        if (!disco) {
+            return res.status(404).json({ error: 'Disco não encontrado' });
+        }
+
+        // Deleta o disco encontrado
         await disco.destroy();
-        res.json({ message: 'Disco deletado' });
+
+        // Retorna mensagem de sucesso
+        res.json({ message: 'Disco deletado com sucesso' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao deletar o disco' });
     }
 };
 

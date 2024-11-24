@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Artista</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Atualizar Artista: <%= artista.nome %></h1>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/discos">Cadastrar Disco</a></li>
+                <li><a href="/artistas/novo">Cadastrar Artistas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Atualizar Artista</h2>
+        
+        <!-- Formulário de Atualização do Artista -->
+        <form action="/artistas/atualizar/<%= artista.id %>" method="POST" enctype="multipart/form-data">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" value="<%= artista.nome %>" required><br><br>
+
+            <label for="bio">Biografia:</label>
+            <textarea id="bio" name="bio" required><%= artista.bio %></textarea><br><br>
+
+            <label for="foto">Foto (URL ou Upload):</label>
+            <input type="text" id="foto" name="foto" value="<%= artista.foto %>" placeholder="URL da foto" /><br><br>
+
+            <button type="submit">Atualizar Artista</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Catálogo de Artistas</p>
+    </footer>
+
+</body>
+</html>

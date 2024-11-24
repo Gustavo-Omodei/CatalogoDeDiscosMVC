@@ -30,6 +30,16 @@
             <label for="capaImagem">Capa do Disco (URL da imagem):</label>
             <input type="text" id="capaImagem" name="capaImagem" placeholder="https://exemplo.com/imagem.jpg" required>
 
+            <label for="disco-genero">Gênero:</label>
+            <select name="idgenero" required>
+                <% generos.forEach(genero => { %>
+                    <option value="<%= genero.idGenero %>"
+                        <%= disco && disco.idgenero === genero.idGenero ? 'selected' : '' %>>
+                        <%= genero.nome %>
+                    </option>
+                <% }); %>
+            </select>
+
             <h3>Faixas do Disco</h3>
             <div id="faixas-container">
                 <div class="faixa">

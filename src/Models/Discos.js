@@ -2,6 +2,7 @@ const Artistas = require('./Artistas'); // Certifique-se de que a importação e
 const Faixas = require('./Faixas'); // Certifique-se de que a importação está correta
 const sequelize = require('../../config/database'); // Volta duas pastas para acessar config
 const { Model, DataTypes } = require('sequelize');
+const Genero = require('./Genero'); // Certifique-se de que a importação está correta
 
 class Discos extends Model {}
 
@@ -27,7 +28,15 @@ Discos.init(
             type: DataTypes.STRING,
             allowNull: true,
             field: 'capaImagem',
-        }
+        },
+        idgenero: {
+            type: DataTypes.INTEGER,
+            allowNull: false, // Defina como obrigatório ou não, dependendo da sua lógica
+            references: {
+                model: Genero,
+                key: 'idgenero',
+            },
+        },
     },
     {
         sequelize,
@@ -59,6 +68,16 @@ Discos.hasMany(Faixas, {
 Faixas.belongsTo(Discos, {
     foreignKey: 'idDisco',  // Chave estrangeira no modelo Faixas
     as: 'disco',  // Alias para o relacionamento
+});
+
+Discos.belongsTo(Genero, {
+    foreignKey: 'idgenero',
+    as: 'genero',
+});
+
+Genero.hasMany(Discos, {
+    foreignKey: 'idgenero',
+    as: 'discos',
 });
 
 module.exports = Discos;

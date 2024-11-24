@@ -14,35 +14,29 @@ router.post('/discos', discoController.criarDisco);
 
 router.get('/discos/:id', discoController.atualizarDisco);
 router.put('/discos/:id', discoController.atualizarDisco);
-router.delete('/:id', discoController.deletarDisco);
+router.delete('/discos/deletar/:id', (req, res, next) => {
+  console.log("Requisição DELETE recebida para ID:", req.params.id);
+  next(); // Isso passará para o controlador de deletar
+}, discoController.deletarDisco);
+
 
 router.get('/discos', async (req, res) => {
   try {
       const generos = await Genero.findAll();
 
-      res.render('discos', { generos });
+      res.render('discos', { disco: null, generos });
   } catch (error) {
       console.error('Erro ao carregar os gêneros:', error);
       res.status(500).json({ error: 'Erro ao carregar os gêneros', details: error.message });
   }
 });
 
-//Faixas
-router.post('/faixas', faixasController.createFaixa);
-
-router.get('/faixas', (req, res) => {
-  res.render('faixas'); 
-});
-router.get('/faixas/:id', faixasController.getFaixaById);
-router.put('/faixas/:id', faixasController.updateFaixa);
-router.delete('/faixas/:id', faixasController.deleteFaixa);
 
 //Artistas
 
 router.get('/artistas/novo', artistasController.renderFormArtista);
 
 router.get('/artistas', artistasController.listarArtistas); // Controlador de listagem
-
 
 router.get('/artistas', async (req, res) => {
   try {
