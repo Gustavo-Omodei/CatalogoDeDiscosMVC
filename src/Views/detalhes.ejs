@@ -1,146 +1,182 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= disco.titulo %> - Detalhes</title>
-    <link rel="stylesheet" href="/styles.css">
-    <style>
-        /* Estilo básico para a navegação */
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline-block;
-            margin-right: 10px;
-            position: relative; /* Necessário para os dropdowns */
-        }
+    <!DOCTYPE html>
+    <html lang="pt-br">
 
-        /* Esconde os menus suspensos por padrão */
-        nav select {
-            display: none;
-            position: absolute;
-            top: 100%; /* Faz os dropdowns aparecerem abaixo */
-            left: 0;
-            width: 200px;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            <%= disco.titulo %> - Detalhes
+        </title>
+        <link rel="stylesheet" href="/styles.css">
+        <style>
+            nav ul {
+                list-style-type: none;
+                padding: 0;
+            }
 
-        /* Mostra o menu suspenso ao passar o mouse por cima */
-        nav li:hover > select {
-            display: block;
-        }
+            nav ul li {
+                display: inline-block;
+                margin-right: 10px;
+                position: relative;
+            }
 
-        /* Estilo dos elementos select (dropdowns) */
-        nav select {
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            padding: 5px;
-        }
-    </style>
-</head>
-<body>
+            nav select {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 200px;
+            }
 
-    <header>
-        <h1><%= disco.titulo %> - Detalhes</h1>
-        <nav>
+            nav li:hover>select {
+                display: block;
+            }
+
+            nav select {
+                background-color: #f1f1f1;
+                border: 1px solid #ccc;
+                padding: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <header>
+            <h1>
+                <%= disco.titulo %> - Detalhes
+            </h1>
+            <nav>
+                <ul>
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/discos">Discos</a></li>
+                        <li><a href="/artistas/novo">Artistas</a></li>
+                        <li><a href="/generos">Gêneros</a></li>
+                    </ul>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h2>
+                <%= disco.titulo %>
+            </h2>
+
+            <form class="update-form" data-id="<%= disco.idDisco %>">
+                <label for="titulo-<%= disco.idDisco %>">Título:</label>
+                <input type="text" id="titulo-<%= disco.idDisco %>" name="titulo" value="<%= disco.titulo %>" required>
+
+                <label for="anoLancamento-<%= disco.idDisco %>">Ano:</label>
+                <input type="number" id="anoLancamento-<%= disco.idDisco %>" name="anoLancamento"
+                    value="<%= disco.anoLancamento %>" required>
+
+                <label for="capaImagem-<%= disco.idDisco %>">Capa:</label>
+                <input type="text" id="capaImagem-<%= disco.idDisco %>" name="capaImagem" value="<%= disco.capaImagem %>">
+
+                <button type="submit">Atualizar</button>
+            </form>
+
+            <form id="deleteForm" method="POST" action="/discos/deletar/<%= disco.idDisco %>">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" style="background-color: red; color: white;">Deletar Disco</button>
+            </form>
+
+            <h3>Faixas:</h3>
             <ul>
-                <li><a href="/">Início</a></li>
-
-                <!-- Dropdown para Discos -->
-                <li>
-                    <a href="#">Discos</a>
-                    <select id="discoActions" name="discoActions" onchange="window.location.href=this.value;">
-                        <option value="/discos">Cadastrar Disco</option>
-                        <option value="/discos/atualizar/<%= disco.idDisco %>">Atualizar Disco</option>
-                        <option value="/discos/deletar/<%= disco.idDisco %>">Excluir Disco</option>
-                    </select>
-                </li>
-
-                <!-- Dropdown para Artistas -->
-                <li>
-                    <a href="#">Artistas</a>
-                    <select id="artistaActions" name="artistaActions" onchange="window.location.href=this.value;">
-                        <option value="/artistas/novo">Cadastrar Artista</option>
-                        <option value="/artistas/atualizar/<%= disco.idDisco %>">Atualizar Artista</option>
-                        <option value="/artistas/deletar/<%= disco.idDisco %>">Excluir Artista</option>
-                    </select>
-                </li>
+                <% if (faixas && faixas.length> 0) { %>
+                    <% faixas.forEach(faixa=> { %>
+                        <li>
+                            <%= faixa.titulo %>
+                        </li>
+                        <% }); %>
+                            <% } else { %>
+                                <p>Sem faixas cadastradas.</p>
+                                <% } %>
             </ul>
-        </nav>
-    </header>
 
-    <main>
-        <h2><%= disco.titulo %></h2>
+            <h3>Artistas:</h3>
+            <ul>
+                <% if (artistas && artistas.length> 0) { %>
+                    <% artistas.forEach(artista=> { %>
+                        <li>
+                            <%= artista.nome %>
+                        </li>
+                        <% }); %>
+                            <% } else { %>
+                                <p>Sem artistas associados.</p>
+                                <% } %>
+            </ul>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Catálogo de Discos</p>
+        </footer>
+
+        <script>
+            document.getElementById('deleteForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                fetch(this.action, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error('Erro ao enviar a requisição DELETE:', error);
+                    });
+            });
         
-        <!-- Formulário de Edição do Disco -->
-        <form action="/discos/<%= disco.idDisco %>" method="POST" enctype="multipart/form-data">
-            <label for="titulo">Título:</label>
-            <input type="text" id="titulo" name="titulo" value="<%= disco.titulo %>" required><br><br>
+            document.addEventListener('DOMContentLoaded', () => {
+        const updateForms = document.querySelectorAll('.update-form');
 
-            <label for="anoLancamento">Ano de Lançamento:</label>
-            <input type="number" id="anoLancamento" name="anoLancamento" value="<%= disco.anoLancamento %>" required><br><br>
+        updateForms.forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault(); 
+                const discoId = form.getAttribute('data-id');
+                
+                const titulo = form.querySelector('[name="titulo"]').value;
+                const anoLancamento = form.querySelector('[name="anoLancamento"]').value;
+                const capaImagem = form.querySelector('[name="capaImagem"]').value;
 
-            <strong>Gênero:</strong> <%= disco.genero ? disco.genero.nome : 'Sem gênero associado' %><br>
+                const payload = {
+                    titulo,
+                    anoLancamento,
+                    capaImagem,
+                };
 
-            <label for="capaImagem">Capa do Disco (URL ou Upload):</label>
-            <input type="text" id="capaImagem" name="capaImagem" value="<%= disco.capaImagem %>" placeholder="URL da imagem" /><br><br>
+                try {
+                    const response = await fetch(`/discos/${discoId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
 
-            <button type="submit">Atualizar Disco</button>
-        </form>
+                    if (response.ok) {
+                        const htmlResponse = await response.text();
+                        document.body.innerHTML = htmlResponse; 
+                        alert(`Disco atualizado com sucesso`);
 
-        <!-- Formulário para Deletar Disco -->
-        <form id="deleteForm" method="POST" action="/discos/deletar/<%= disco.idDisco %>">
-            <input type="hidden" name="_method" value="DELETE">
-            <button type="submit" style="background-color: red; color: white;">Deletar Disco</button>
-        </form>
-
-        <h3>Faixas:</h3>
-        <ul>
-            <% if (faixas && faixas.length > 0) { %>
-                <% faixas.forEach(faixa => { %>
-                    <li><%= faixa.titulo %></li>
-                <% }); %>
-            <% } else { %>
-                <p>Sem faixas cadastradas.</p>
-            <% } %>
-        </ul>
-
-        <h3>Artistas:</h3>
-        <ul>
-            <% if (artistas && artistas.length > 0) { %>
-                <% artistas.forEach(artista => { %>
-                    <li><%= artista.nome %></li>
-                <% }); %>
-            <% } else { %>
-                <p>Sem artistas associados.</p>
-            <% } %>
-        </ul>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Catálogo de Discos</p>
-    </footer>
-
-    <script>
-        document.getElementById('deleteForm').addEventListener('submit', function(event) {
-            event.preventDefault(); 
-    
-            fetch(this.action, {
-                method: 'DELETE',  
-                headers: {
-                    'Content-Type': 'application/json'
+                    } else {
+                        alert(`Erro ao atualizar o disco: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('Erro ao atualizar disco:', error);
+                    alert('Erro ao atualizar disco');
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); 
-            })
-            .catch(error => {
-                console.error('Erro ao enviar a requisição DELETE:', error);
             });
         });
-    </script>
-    
-</body>
-</html>
+    });
+
+        </script>
+
+    </body>
+
+    </html>

@@ -52,23 +52,33 @@
 
                 <!-- Dropdown para Discos -->
                 <li>
-                    <a href="#">Discos</a>
-                    <select id="discoActions" name="discoActions" onchange="window.location.href=this.value;">
+                    <a href="/discos">Discos</a>
+                    <!-- <select id="discoActions" name="discoActions" onchange="window.location.href=this.value;">
                         <option value="/discos">Cadastrar Disco</option>
                         <option value="/discos/atualizar/<%= discos.idDisco %>">Atualizar Disco</option>
                         <option value="/discos/deletar/<%= discos.idDisco %>">Excluir Disco</option>
-                    </select>
+                    </select> -->
                 </li>
 
                 <!-- Dropdown para Artistas -->
                 <li>
-                    <a href="#">Artistas</a>
-                    <select id="artistaActions" name="artistaActions" onchange="window.location.href=this.value;">
+                    <a href="/artistas/novo">Artistas</a>
+                    <!-- <select id="artistaActions" name="artistaActions" onchange="window.location.href=this.value;">
                         <option value="/artistas/novo">Cadastrar Artista</option>
                         <option value="/artistas/atualizar/<%= discos.idDisco %>">Atualizar Artista</option>
                         <option value="/artistas/deletar/<%= discos.idDisco %>">Excluir Artista</option>
-                    </select>
+                    </select> -->
                 </li>
+
+                <li>
+                    <a href="/generos">Gêneros</a>
+                    <!-- <select id="artistaActions" name="artistaActions" onchange="window.location.href=this.value;">
+                        <option value="/artistas/novo">Cadastrar Artista</option>
+                        <option value="/artistas/atualizar/<%= discos.idDisco %>">Atualizar Artista</option>
+                        <option value="/artistas/deletar/<%= discos.idDisco %>">Excluir Artista</option>
+                    </select> -->
+                </li>
+                
             </ul>
         </nav>
     </header>

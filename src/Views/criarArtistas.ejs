@@ -1,61 +1,157 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Discos - Inserir Disco</title>
+    <title>Catálogo de Discos - Gerenciar Artistas</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
     <header>
         <h1>Catálogo de Discos</h1>
         <nav>
             <ul>
-              <li><a href="/">Início</a></li>
-              <li><a href="/discos">Cadastrar Disco</a></li>
-              <li><a href="/artistas/novo">Cadastrar Artistas</a></li>
+                <li><a href="/">Início</a></li>
+                <li><a href="/discos">Discos</a></li>
+                <li><a href="/artistas/novo">Artistas</a></li>
+                <li><a href="/generos">Gêneros</a></li>
             </ul>
         </nav>
     </header>
 
-<body>
-  <main>
-    <h2>Cadastrar Novo Artista</h2>
-    <form id="form-inserir-artista" method="POST" action="/artistas">
-      
-      <label for="nome">Nome do Artista:</label>
-      <input type="text" id="nome" name="nome" required>
-  
-      <select name="idGenero" required>
-        <option value="rock">Rock</option>
-        <option value="pop">Pop</option>
-        <option value="jazz">Jazz</option>
-        <!-- Adicione os gêneros disponíveis -->
-    </select>
-  
-      <label for="discos">Discos Associados:</label>
-      <select id="discos" name="discos[]" multiple required>
-        <% if (discos && discos.length > 0) { %>
-          <% discos.forEach(disco => { %>
-            <option value="<%= disco.idDisco %>"><%= disco.titulo %> (<%= disco.anoLancamento %>)</option>
-          <% }) %>
-        <% } else { %>
-          <option disabled>Nenhum disco disponível</option>
-        <% } %>
-      </select>
+    <main>
+        <h2>Cadastrar Novo Artista</h2>
+        <form id="form-inserir-artista" method="POST" action="/artistas">
+            <label for="nome">Nome do Artista:</label>
+            <input type="text" id="nome" name="nome" required>
 
+            <label for="idGenero">Gênero do Artista:</label>
+            <select id="idGenero" name="idGenero" required>
+                <option value="rock">Rock</option>
+                <option value="pop">Pop</option>
+                <option value="jazz">Jazz</option>
+                <!-- Adicione os gêneros disponíveis -->
+            </select>
 
-      
-  
-      <button type="submit">Cadastrar Artista</button>
-    </form>
-  </main>
-  <footer>
-    <p>&copy; 2024 Catálogo de Discos</p>
-</footer>
+            <label for="discos">Discos Associados:</label>
+            <select id="discos" name="discos[]" multiple required>
+                <% if (discos && discos.length > 0) { %>
+                    <% discos.forEach(disco => { %>
+                        <option value="<%= disco.idDisco %>"><%= disco.titulo %> (<%= disco.anoLancamento %>)</option>
+                    <% }) %>
+                <% } else { %>
+                    <option disabled>Nenhum disco disponível</option>
+                <% } %>
+            </select>
+
+            <button type="submit">Cadastrar Artista</button>
+        </form>
+
+        <h2>Artistas Cadastrados</h2>
+        <ul id="lista-artistas">
+            <% if (artistas && artistas.length > 0) { %>
+                <% artistas.forEach(artista => { %>
+                    <li id="artista-<%= artista.idArtista %>">
+                        <span id="nome-<%= artista.idArtista %>"><%= artista.nome %></span>
+                        <button onclick="editarArtista(<%= artista.idArtista %>)">Editar</button>
+                        <button onclick="deletarArtista(<%= artista.idArtista %>)" style="background-color: red; color: white;">Deletar</button>
+
+                        <!-- Formulário de Edição -->
+                        <form id="update-form-<%= artista.idArtista %>" class="update-form" data-id="<%= artista.idArtista %>" style="display:none;">
+                            <label for="nome-editar-<%= artista.idArtista %>">Nome do Artista:</label>
+                            <input type="text" id="nome-editar-<%= artista.idArtista %>" name="nome" value="<%= artista.nome %>" required>
+
+                            <label for="idGenero-editar-<%= artista.idArtista %>">Gênero do Artista:</label>
+                            <select id="idGenero-editar-<%= artista.idArtista %>" name="idGenero" required>
+                                <option value="rock" <% if (artista.idGenero === 'rock') { %>selected<% } %>>Rock</option>
+                                <option value="pop" <% if (artista.idGenero === 'pop') { %>selected<% } %>>Pop</option>
+                                <option value="jazz" <% if (artista.idGenero === 'jazz') { %>selected<% } %>>Jazz</option>
+                            </select>
+
+                            <button type="submit">Salvar</button>
+                        </form>
+                    </li>
+                <% }) %>
+            <% } else { %>
+                <p>Nenhum artista cadastrado.</p>
+            <% } %>
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Catálogo de Discos</p>
+    </footer>
+
+    <script>
+        // Função para editar artista
+        function editarArtista(artistaId) {
+            const form = document.getElementById(`update-form-${artistaId}`);
+            form.style.display = 'block';
+        }
+
+        // Atualizar Artista
+        document.addEventListener('DOMContentLoaded', () => {
+            const updateForms = document.querySelectorAll('.update-form');
+
+            updateForms.forEach(form => {
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    const artistaId = form.getAttribute('data-id');
+                    const nome = form.querySelector('[name="nome"]').value;
+                    const idGenero = form.querySelector('[name="idGenero"]').value;
+
+                    const payload = { nome, idGenero };
+
+                    try {
+                      const response = await fetch(`/artistas/${artistaId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(payload),
+                        });
+
+                        if (response.ok) {
+                            const updatedArtista = await response.json();
+                            document.getElementById(`nome-${artistaId}`).innerText = updatedArtista.nome;
+                            alert('Artista atualizado com sucesso');
+                            form.style.display = 'none';
+                        } else {
+                            alert(`Erro ao atualizar artista: ${response.statusText}`);
+                        }
+                    } catch (error) {
+                        console.error('Erro ao atualizar artista:', error);
+                        alert('Erro ao atualizar artista');
+                    }
+                });
+            });
+        });
+
+        // Função para deletar artista
+        async function deletarArtista(artistaId) {
+            if (confirm('Tem certeza que deseja deletar este artista?')) {
+                try {
+                    const response = await fetch(`/artistas/${artistaId}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (response.ok) {
+                        document.getElementById(`artista-${artistaId}`).remove();
+                        alert('Artista deletado com sucesso');
+                    } else {
+                        alert('Erro ao deletar artista');
+                    }
+                } catch (error) {
+                    console.error('Erro ao deletar artista:', error);
+                    alert('Erro ao deletar artista');
+                }
+            }
+        }
+    </script>
+
 </body>
+
 </html>
-
-
-
-  

@@ -3,6 +3,7 @@ const router = express.Router();
 const discoController = require('../Controllers/discoController');
 const faixasController = require('../Controllers/faixaController');
 const artistasController = require('../Controllers/artistaController');
+const generoController = require('../Controllers/generoController');
 const Genero = require('../Models/Genero')
 const Discos = require('../Models/Discos')
 const Artistas = require('../Models/Artistas')
@@ -12,11 +13,12 @@ const Artistas = require('../Models/Artistas')
 router.get('/', discoController.listarDiscos);
 router.post('/discos', discoController.criarDisco);
 
+
 router.get('/discos/:id', discoController.atualizarDisco);
 router.put('/discos/:id', discoController.atualizarDisco);
 router.delete('/discos/deletar/:id', (req, res, next) => {
   console.log("Requisição DELETE recebida para ID:", req.params.id);
-  next(); // Isso passará para o controlador de deletar
+  next(); 
 }, discoController.deletarDisco);
 
 
@@ -31,6 +33,23 @@ router.get('/discos', async (req, res) => {
   }
 });
 
+//Generos
+  router.get('/generos', async (req, res) => {
+    try {
+        const generos = await Genero.findAll(); // Recuperar todos os gêneros
+
+        res.render('generos', { generos }); // Passa a lista de gêneros para o template EJS
+    } catch (error) {
+        console.error('Erro ao carregar os gêneros:', error);
+        res.status(500).json({ error: 'Erro ao carregar os gêneros', details: error.message });
+    }
+  });
+
+  router.post('/generos', generoController.criarGenero);
+
+  router.put('/generos/:id', generoController.atualizarGenero);
+
+  router.delete('/generos/:id', generoController.deletarGenero);
 
 //Artistas
 
@@ -51,20 +70,20 @@ router.get('/artistas', async (req, res) => {
 router.post('/artistas', async (req, res) => {
 
   try {
-    const { nome, idGenero, discos } = req.body; // Pegando os valores enviados no formulário
+    const { nome, idGenero, discos } = req.body; 
 
     const artista = await Artistas.create({
       nome,
-      idGenero, // Certifique-se de que o idGenero seja passado corretamente
+      idGenero,
     });
 
     if (discos && discos.length > 0) {
       const discosExistentes = await Discos.findAll({
         where: {
-          idDisco: discos, // Aqui você vai buscar os discos pelos IDs
+          idDisco: discos, 
         },
       });
-      await artista.setDiscos(discosExistentes); // Associando discos ao artista
+      await artista.setDiscos(discosExistentes); 
     }
 
     // res.status(201).json(artista); // Respondendo com o artista criado

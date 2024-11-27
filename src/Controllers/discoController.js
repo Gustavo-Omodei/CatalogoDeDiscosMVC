@@ -5,130 +5,38 @@ const Faixas = require('../Models/Faixas');
 
 const { Op } = require('sequelize');
 
-// const listarDiscos = async (req, res) => {
-//     try {
-//         const { tipoBusca, nomeDisco, nomeArtista } = req.query;
-
-//         // Filtros condicionais
-//         const whereConditions = {};
-//         const include = [];
-
-//         if (tipoBusca === 'disco') {
-//             whereConditions.titulo = {
-//                 [Op.iLike]: `%${nomeDisco}%`
-//             };
-//         }
-
-//         if (tipoBusca === 'artista') {
-//             include.push({
-//                 model: Artistas,
-//                 as: 'Artistas', // Aqui você confirma o alias
-//                 where: {
-//                     nome: {
-//                         [Op.iLike]: `%${nomeArtista}%`
-//                     }
-//                 }
-//             });
-//         } else {
-//             include.push({
-//                 model: Artistas,
-//                 as: 'Artistas'
-//             });
-//         }
-
-//         const discos = await Discos.findAll({
-//             include,
-//             where: whereConditions
-//         });
-
-//         res.render('index', { discos, nomeDisco, nomeArtista });
-//     } catch (error) {
-//         console.error('Erro ao carregar discos:', error);
-//         res.status(500).json({ error: 'Erro ao carregar discos' });
-//     }
-// };
-
-// const listarDiscos = async (req, res) => {
-//     try {
-//         const { tipoBusca, termoBusca } = req.query;
-
-//         // Filtros condicionais
-//         const whereConditions = {};
-//         const include = [];
-
-//         if (tipoBusca === 'disco') {
-//             // Busca pelo título do disco
-//             whereConditions.titulo = {
-//                 [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
-//             };
-//         } else if (tipoBusca === 'artista') {
-//             // Busca pelo nome do artista
-//             include.push({
-//                 model: Artistas,
-//                 as: 'Artistas',
-//                 where: {
-//                     nome: {
-//                         [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
-//                     }
-//                 }
-//             });
-//         } else {
-//             // Caso não seja especificado um tipo válido, inclua artistas por padrão
-//             include.push({
-//                 model: Artistas,
-//                 as: 'Artistas'
-//             });
-//         }
-
-//         const discos = await Discos.findAll({
-//             include,
-//             where: whereConditions
-//         });
-
-//         res.render('index', { discos, tipoBusca, termoBusca });
-//     } catch (error) {
-//         console.error('Erro ao carregar discos:', error);
-//         res.status(500).json({ error: 'Erro ao carregar discos' });
-//     }
-// };
-
 const listarDiscos = async (req, res) => {
     try {
         const { tipoBusca, termoBusca } = req.query;
 
-        // Filtros condicionais
         const whereConditions = {};
         const include = [];
 
         if (tipoBusca === 'disco') {
-            // Busca pelo título do disco
             whereConditions.titulo = {
-                [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
+                [Op.iLike]: `%${termoBusca}%` 
             };
         } else if (tipoBusca === 'artista') {
-            // Busca pelo nome do artista
             include.push({
                 model: Artistas,
                 as: 'Artistas',
                 where: {
                     nome: {
-                        [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
+                        [Op.iLike]: `%${termoBusca}%`
                     }
                 }
             });
         } else if (tipoBusca === 'genero') {
-            // Busca pelo nome do gênero
             include.push({
                 model: Genero,
                 as: 'genero',
                 where: {
                     nome: {
-                        [Op.iLike]: `%${termoBusca}%` // Ignora maiúsculas/minúsculas
+                        [Op.iLike]: `%${termoBusca}%`
                     }
                 }
             });
         } else {
-            // Caso não seja especificado um tipo válido, inclua artistas por padrão
             include.push({
                 model: Artistas,
                 as: 'Artistas'
@@ -164,7 +72,7 @@ const criarDisco = async (req, res) => {
             const faixasFormatadas = faixas.map((faixa) => ({
                 titulo: faixa.titulo,
                 idDisco: novoDisco.idDisco,
-                idGenero: faixa.idGenero, // Gênero da faixa
+                idGenero: faixa.idGenero, 
             }));
 
             await Faixas.bulkCreate(faixasFormatadas);
@@ -172,7 +80,6 @@ const criarDisco = async (req, res) => {
 
         res.redirect(`/discos/${novoDisco.idDisco}`);
 
-        // res.status(201).json({ message: 'Disco criado com sucesso!', disco: novoDisco });
     } catch (error) {
         console.error('Erro ao criar disco:', error);
         res.status(500).json({ error: 'Erro ao criar disco', details: error.message });
@@ -185,16 +92,16 @@ const atualizarDisco = async (req, res) => {
         const { id } = req.params;
         const { titulo, anoLancamento, capaImagem } = req.body;
 
-        // Buscar o disco junto com os artistas e faixas
-        const disco = await Discos.findByPk(id, {
+        const disco = await Discos.findOne({
+            where: {idDisco: id},
             include: [
                 {
-                    model: Faixas, // Incluindo faixas vinculadas ao disco
-                    as: 'faixas', // Usando o alias 'faixas' definido na associação
+                    model: Faixas, 
+                    as: 'faixas', 
                 },
                 {
-                    model: Artistas, // Incluindo artistas vinculados ao disco
-                    as: 'Artistas', // Usando o alias 'Artistas' definido na associação
+                    model: Artistas, 
+                    as: 'Artistas', 
                 },
                 {
                     model: Genero,
@@ -208,10 +115,8 @@ const atualizarDisco = async (req, res) => {
             return res.status(404).json({ error: 'Disco não encontrado' });
         }
 
-        // Atualizar os dados do disco
         await disco.update({ titulo, anoLancamento, capaImagem });
 
-        // Renderizar a página de detalhes com o disco, faixas e artistas
         res.render('detalhes', { disco, faixas: disco.faixas, artistas: disco.Artistas });
     } catch (error) {
         console.error('Erro ao atualizar disco:', error);
@@ -220,41 +125,24 @@ const atualizarDisco = async (req, res) => {
 };
 
 
-
-// const deletarDisco = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const disco = await Discos.findByPk(id);
-//         if (!disco) return res.status(404).json({ error: 'Disco não encontrado' });
-
-//         await disco.destroy();
-//         res.json({ message: 'Disco deletado' });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };
-
 const deletarDisco = async (req, res) => {
-    const { id } = req.params; // Obtém o ID do disco a ser deletado da URL
+    const { id } = req.params; 
 
 
     try {
 
 
         const disco = await Discos.findOne({
-            where: { idDisco: id }  // Aqui usamos 'idDisco' 
+            where: { idDisco: id }  
         });
 
-        // Verifica se o disco existe
 
         if (!disco) {
             return res.status(404).json({ error: 'Disco não encontrado' });
         }
 
-        // Deleta o disco encontrado
         await disco.destroy();
 
-        // Retorna mensagem de sucesso
         res.json({ message: 'Disco deletado com sucesso' });
     } catch (error) {
         console.error(error);

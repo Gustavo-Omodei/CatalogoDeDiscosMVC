@@ -83,8 +83,7 @@ form select {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
-
-form button {
+ button {
     background-color: #f4a261;
     color: white;
     border: none;

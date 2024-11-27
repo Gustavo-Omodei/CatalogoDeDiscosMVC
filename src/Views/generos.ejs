@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Gêneros</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Lista de Gêneros</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/discos">Discos</a></li>
+                <li><a href="/artistas/novo">Artistas</a></li>
+                <li><a href="/generos">Gêneros</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Gêneros Disponíveis</h2>
+
+        <% if (generos && generos.length> 0) { %>
+            <ul id="genero-list">
+                <% generos.forEach(genero=> { %>
+                    <li id="genero-<%= genero.idGenero %>">
+                        <span id="nome-<%= genero.idGenero %>">
+                            <%= genero.nome %>
+                        </span>
+                        <button onclick="editarGenero(<%= genero.idGenero %>)">Editar</button>
+                        <button onclick="deletarGenero(<%= genero.idGenero %>)"
+                            style="background-color: red; color: white;">Deletar</button>
+                    </li>
+                    <% }); %>
+            </ul>
+            <% } else { %>
+                <p>Não há gêneros cadastrados.</p>
+                <% } %>
+
+                    <h3>Cadastrar Novo Gênero</h3>
+                    <form id="form-cadastrar" action="/generos" method="POST">
+                        <label for="nome">Nome do Gênero:</label>
+                        <input type="text" id="nome" name="nome" required>
+                        <button type="submit">Cadastrar</button>
+                    </form>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Catálogo de Discos</p>
+    </footer>
+
+    <script>
+        // Função para editar um gênero
+        function editarGenero(id) {
+            const nomeElement = document.getElementById(`nome-${id}`);
+            const originalNome = nomeElement.innerText;
+
+            // Transforma o texto em um campo de entrada
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = originalNome;
+            input.id = `input-${id}`;
+
+            // Substitui o span pelo campo de entrada
+            nomeElement.replaceWith(input);
+            input.focus();
+
+            // Lida com o envio ao sair do campo ou pressionar Enter
+            const salvarAlteracao = () => {
+                const novoNome = input.value.trim();
+
+                if (novoNome && novoNome !== originalNome) {
+                    fetch(`/generos/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ nome: novoNome })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json(); // Retorna a resposta como JSON
+                            } else {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || "Erro desconhecido");
+                                });
+                            }
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                const span = document.createElement("span");
+                                span.id = `nome-${id}`;
+                                span.innerText = novoNome;
+                                input.replaceWith(span);
+                                alert("Gênero atualizado com sucesso!");
+                            } else {
+                                alert("Erro ao atualizar gênero");
+                                cancelarEdicao();
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Erro ao editar gênero:", error);
+                            alert("Erro ao editar gênero");
+                            cancelarEdicao();
+                        });
+                } else {
+                    cancelarEdicao();
+                }
+            };
+
+
+            const cancelarEdicao = () => {
+                const span = document.createElement("span");
+                span.id = `nome-${id}`;
+                span.innerText = originalNome;
+                input.replaceWith(span);
+            };
+
+            // Salvar ao pressionar Enter
+            input.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    salvarAlteracao();
+                }
+            });
+
+            // Salvar ou cancelar ao sair do campo
+            input.addEventListener("blur", salvarAlteracao);
+        }
+
+    </script>
+
+</body>
+
+</html>
