@@ -133,6 +133,33 @@
             input.addEventListener("blur", salvarAlteracao);
         }
 
+        function deletarGenero(id) {
+    if (confirm("Tem certeza que deseja deletar este gênero?")) {
+        fetch(`/generos/deletar/${id}`, {
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+    }
+})
+.then(response => response.json())
+.then(data => {
+    if (data.message) { // Verifica se o campo 'message' está presente
+        const generoElement = document.getElementById(`genero-${id}`);
+        generoElement.remove();
+        alert(data.message); // Exibe a mensagem do servidor
+    } else {
+        alert("Erro ao deletar gênero");
+    }
+})
+.catch(error => {
+    console.error("Erro ao deletar gênero:", error);
+    alert("Erro ao deletar gênero");
+});
+    }
+};
+
+
+
     </script>
 
 </body>

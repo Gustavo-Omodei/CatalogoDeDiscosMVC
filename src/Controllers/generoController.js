@@ -75,12 +75,13 @@ const deletarGenero = async (req, res) => {
 
         await genero.destroy();
 
-        res.json({ message: 'Gênero deletado com sucesso' });
+        res.json({ success: true, message: 'Gênero deletado com sucesso' }); // Alteração para incluir 'success'
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao deletar o gênero' });
     }
 };
+
 
 module.exports = {
     listarGeneros,

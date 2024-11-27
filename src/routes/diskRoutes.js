@@ -49,7 +49,7 @@ router.get('/discos', async (req, res) => {
 
   router.put('/generos/:id', generoController.atualizarGenero);
 
-  router.delete('/generos/:id', generoController.deletarGenero);
+  router.delete('/generos/deletar/:id', generoController.deletarGenero);
 
 //Artistas
 
